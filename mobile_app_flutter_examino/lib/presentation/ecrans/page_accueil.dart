@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
-import '../../configuration/theme/app_theme.dart'; // Import de ton thème
+import '../../configuration/theme/app_theme.dart'; 
 
 class PageAccueil extends StatelessWidget {
   const PageAccueil({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // On récupère la couleur depuis ton fichier AppTheme
+    // On récupère la couleur depuis AppTheme
     final Color couleurPrincipale = AppTheme.primaryColor;
     // On crée une version claire pour le deuxième bouton
-    final Color couleurBoutonClair = couleurPrincipale.withOpacity(0.2);
+    final Color couleurBoutonClair = couleurPrincipale.withOpacity(0.7);
     const Color texteSombre = Color(0xFF333333);
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // 1. Image d'illustration (60% de l'écran)
+         
           Expanded(
             flex: 6,
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(30.0),
                 child: Image.asset(
-                  'assets/images/accueil_img.png', // Chemin mis à jour
+                  'assets/images/accueil_img.png', 
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) => 
                     Icon(Icons.school, size: 100, color: couleurPrincipale),
@@ -32,13 +32,13 @@ class PageAccueil extends StatelessWidget {
             ),
           ),
 
-          // 2. Slogan (30% de l'écran)
+          // 2. Slogan 
           Expanded(
             flex: 3,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Text(
-                "L'examen en ligne n'a jamais été aussi simple",
+                "L'examen en ligne n'a jamais été aussi facile",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: texteSombre,
@@ -50,12 +50,11 @@ class PageAccueil extends StatelessWidget {
             ),
           ),
 
-          // 3. Barre de boutons (Bas de l'écran)
           SizedBox(
             height: 80,
             child: Row(
               children: [
-                // Bouton S'inscrire (Couleur pleine)
+                // Bouton S'inscrire 
                Expanded(
   child: InkWell(
     onTap: () {
@@ -73,7 +72,7 @@ class PageAccueil extends StatelessWidget {
     ),
   ),
 ),
-                // Bouton Se Connecter (Couleur claire)
+                // Bouton Se Connecter 
                 Expanded(
   child: InkWell(
     onTap: () {
