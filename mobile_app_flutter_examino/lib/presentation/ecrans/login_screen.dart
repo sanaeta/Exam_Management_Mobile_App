@@ -14,7 +14,7 @@ class _LoginScreenState extends State<LoginScreen> {
     bool success = await ApiService().login(_emailController.text, _passwordController.text);
     setState(() => _isLoading = false);
     if (success) {
-      if(mounted) Navigator.pushReplacementNamed(context, '/success');
+      if(mounted) Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
       if(mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Email ou mot de passe incorrect"), backgroundColor: Colors.red));
     }

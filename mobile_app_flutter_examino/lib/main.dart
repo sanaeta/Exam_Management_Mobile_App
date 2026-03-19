@@ -3,7 +3,10 @@ import 'package:mobile_app_flutter_examino/presentation/ecrans/page_accueil.dart
 import 'package:mobile_app_flutter_examino/presentation/ecrans/login_screen.dart';
 import 'package:mobile_app_flutter_examino/presentation/ecrans/register_screen.dart';
 import 'package:mobile_app_flutter_examino/presentation/ecrans/forgot_password_screen.dart';
-import 'package:mobile_app_flutter_examino/presentation/ecrans/success_screen.dart';
+import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_tableau_bord.dart';
+import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_aujourdhui.dart';
+import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_passes.dart';
+import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_avenir.dart';
 
 
 void main() { runApp(const MyApp()); }
@@ -17,13 +20,15 @@ class MyApp extends StatelessWidget {
       title: 'Examino App', 
       debugShowCheckedModeBanner: false, 
       initialRoute: '/', 
-      routes: {
+     routes: {
         '/': (context) => const PageAccueil(),
-        '/login': (context) => const LoginScreen(), 
-        '/register': (context) => const RegisterScreen(),
-        '/forgot_password': (context) => const ForgotPasswordScreen(), 
-        '/success': (context) => const SuccessScreen(),
-      },
+        '/login': (context) => const LoginScreen(),
+        '/dashboard': (context) => const EcranTableauBord(),
+        '/register':(context) => const RegisterScreen(),
+        '/forgot_password': (context) => const ForgotPasswordScreen(),
+        '/examens_passes': (context) => const EcranExamensPasses(),
+        '/examens_avenir': (context) => const EcranExamensAvenir(),
+        '/examens_aujourdhui': (context) => const EcranExamensAujourdhui(),      },
     );
   }
 }

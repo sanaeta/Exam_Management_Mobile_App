@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ApiService {
   static const String baseUrl = 'http://10.0.2.2:8000/api';
 
-  Future<bool> login(String email, String password) async {
+ Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'), 
@@ -13,14 +13,23 @@ class ApiService {
         body: jsonEncode({'email': email, 'password': password})
       );
       if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('token', jsonDecode(response.body)['token']);
+        
+        // 1. On stocke le token
+        await prefs.setString('token', data['token']);
+        
+        // 2. On stocke le nom et prénom (Ajouté pour le dynamisme)
+        if (data['user'] != null) {
+          await prefs.setString('user_nom', data['user']['nom']);
+          await prefs.setString('user_prenom', data['user']['prenom']);
+        }
+        
         return true;
       }
       return false;
     } catch (e) { return false; }
   }
-
   Future<bool> register(String nom, String prenom, String email, String password, int filiereId) async {
     try {
       final response = await http.post(
