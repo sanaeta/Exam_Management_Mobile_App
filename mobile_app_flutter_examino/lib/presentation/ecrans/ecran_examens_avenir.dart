@@ -40,7 +40,7 @@ class _EcranExamensAvenirState extends State<EcranExamensAvenir> {
     return Scaffold(
       body: Column(
         children: [
-          _buildHeader(context, vertExamino),
+          _buildHeader(context),
           const Padding(
             padding: EdgeInsets.all(20),
             child: Align(
@@ -55,16 +55,15 @@ class _EcranExamensAvenirState extends State<EcranExamensAvenir> {
             child: FutureBuilder<List<ModeleExamen>>(
               future: _getData(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator(color: vertExamino));
                 }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text("Aucun examen à venir"));
-                }
+
                 return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, i) {
                     final exam = snapshot.data![i];
+
                     return Container(
                       margin: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                       padding: const EdgeInsets.all(15),
@@ -102,32 +101,38 @@ class _EcranExamensAvenirState extends State<EcranExamensAvenir> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, Color color) {
+  Widget _buildHeader(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(15, MediaQuery.of(context).padding.top + 15, 15, 20),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+        color: vertExamino,
+        borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back, color: Colors.white, size: 25)),
-              Text(nomEtudiant,
-                  style: const TextStyle(
-                      color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white)),
+
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/profile'),
+                child: Text(nomEtudiant,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
             ],
           ),
-          Text("Examens À venir",
-              style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-          const Text("Ecole superieur de technologie de salé-UM5",
-              style: TextStyle(color: Colors.white70, fontSize: 11)),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Examens à venir",
+              style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
       ),
     );

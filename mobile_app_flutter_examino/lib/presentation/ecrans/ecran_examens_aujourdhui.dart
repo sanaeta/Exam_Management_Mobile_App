@@ -40,21 +40,20 @@ class _EcranExamensAujourdhuiState extends State<EcranExamensAujourdhui> {
     return Scaffold(
       body: Column(
         children: [
-          _buildHeader(context, vertExamino),
+          _buildHeader(context),
           Expanded(
             child: FutureBuilder<List<ModeleExamen>>(
               future: _getData(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (!snapshot.hasData) {
                   return Center(child: CircularProgressIndicator(color: vertExamino));
                 }
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text("Aucun examen aujourd'hui"));
-                }
+
                 return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, i) {
                     final exam = snapshot.data![i];
+
                     return Container(
                       margin: const EdgeInsets.all(20),
                       padding: const EdgeInsets.all(20),
@@ -81,9 +80,7 @@ class _EcranExamensAujourdhuiState extends State<EcranExamensAujourdhui> {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: orangeExamino,
-                              ),
+                              style: ElevatedButton.styleFrom(backgroundColor: orangeExamino),
                               child: const Text("Passer",
                                   style: TextStyle(
                                       color: Colors.white, fontWeight: FontWeight.bold)),
@@ -102,7 +99,7 @@ class _EcranExamensAujourdhuiState extends State<EcranExamensAujourdhui> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, Color color) {
+  Widget _buildHeader(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.fromLTRB(
@@ -112,26 +109,32 @@ class _EcranExamensAujourdhuiState extends State<EcranExamensAujourdhui> {
         25,
       ),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
+        color: vertExamino,
+        borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(30), bottomRight: Radius.circular(30)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               IconButton(
                   onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back, color: Colors.white, size: 30)),
-              Text(nomEtudiant,
-                  style: const TextStyle(
-                      color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white)),
+
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/profile'),
+                child: Text(nomEtudiant,
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              ),
             ],
           ),
-          const Text(
-            "Examens d'aujourd'hui",
-            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "Examens d'aujourd'hui",
+              style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),

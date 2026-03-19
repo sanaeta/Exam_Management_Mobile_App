@@ -7,6 +7,7 @@ import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_tableau_bor
 import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_aujourdhui.dart';
 import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_passes.dart';
 import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_avenir.dart';
+import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_profil.dart';
 
 
 void main() { runApp(const MyApp()); }
@@ -28,7 +29,9 @@ class MyApp extends StatelessWidget {
         '/forgot_password': (context) => const ForgotPasswordScreen(),
         '/examens_passes': (context) => const EcranExamensPasses(),
         '/examens_avenir': (context) => const EcranExamensAvenir(),
-        '/examens_aujourdhui': (context) => const EcranExamensAujourdhui(),      },
+        '/examens_aujourdhui': (context) => const EcranExamensAujourdhui(),
+        '/profile': (context) => const EcranProfil(),    
+          },
     );
   }
 }

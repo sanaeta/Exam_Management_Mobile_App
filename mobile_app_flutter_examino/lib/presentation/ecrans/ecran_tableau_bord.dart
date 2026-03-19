@@ -122,8 +122,19 @@ class _EcranTableauBordState extends State<EcranTableauBord> {
                   child: const Icon(Icons.login_rounded, color: Colors.white, size: 20),
                 ),
               ),
-              Text(nomEtudiant,
-                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+             GestureDetector(
+  onTap: () {
+    Navigator.pushNamed(context, '/profile');
+  },
+  child: Text(
+    nomEtudiant,
+    style: const TextStyle(
+      color: Colors.white,
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+    ),
+  ),
+),
             ],
           ),
           const SizedBox(height: 15),
