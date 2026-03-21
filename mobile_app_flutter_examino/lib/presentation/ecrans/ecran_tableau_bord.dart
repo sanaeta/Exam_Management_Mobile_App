@@ -22,22 +22,26 @@ class _EcranTableauBordState extends State<EcranTableauBord> {
   @override
   void initState() {
     super.initState();
-    _loadUser();
-    futureData = _loadFromAPI();
+    _chargerInfos();
+  }
+
+  void _chargerInfos() {
+    setState(() {
+      futureData = _loadFromAPI();
+      _loadUser();
+    });
   }
 
   Future<void> _loadUser() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      nomEtudiant =
-          "${prefs.getString('user_nom') ?? ''} ${prefs.getString('user_prenom') ?? ''}";
+      nomEtudiant = "${prefs.getString('user_nom') ?? ''} ${prefs.getString('user_prenom') ?? ''}";
     });
   }
 
   Future<Map<String, List<ModeleExamen>>> _loadFromAPI() async {
     final prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? "";
-
     return SourceExamenDistante(token: token).getExamensDashboard(
       recherche: rechercheMatiere.isEmpty ? null : rechercheMatiere,
     );
@@ -75,10 +79,13 @@ class _EcranTableauBordState extends State<EcranTableauBord> {
                 return SingleChildScrollView(
                   child: Column(
                     children: [
+                      const SizedBox(height: 10),
                       _sectionTitle("Examens Récents", '/examens_passes'),
                       _buildHorizontalList(recents, true),
+                      const SizedBox(height: 10),
                       _sectionTitle("Examens à venir", '/examens_avenir'),
                       _buildHorizontalList(avenir, false),
+                      const SizedBox(height: 30),
                     ],
                   ),
                 );
@@ -122,19 +129,13 @@ class _EcranTableauBordState extends State<EcranTableauBord> {
                   child: const Icon(Icons.login_rounded, color: Colors.white, size: 20),
                 ),
               ),
-             GestureDetector(
-  onTap: () {
-    Navigator.pushNamed(context, '/profile');
-  },
-  child: Text(
-    nomEtudiant,
-    style: const TextStyle(
-      color: Colors.white,
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-),
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/profile'),
+                child: Text(
+                  nomEtudiant,
+                  style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 15),
@@ -170,8 +171,7 @@ class _EcranTableauBordState extends State<EcranTableauBord> {
               const SizedBox(width: 10),
               PopupMenuButton<String>(
                 icon: Container(
-                  height: 45,
-                  width: 45,
+                  height: 45, width: 45,
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(10),
@@ -192,58 +192,27 @@ class _EcranTableauBordState extends State<EcranTableauBord> {
     );
   }
 
-  Widget _buildSearchResults(List<ModeleExamen> list, List<ModeleExamen> recents) {
-    if (list.isEmpty) return const Center(child: Text("Aucun résultat"));
-    return ListView.builder(
-      itemCount: list.length,
-      itemBuilder: (context, i) {
-        final exam = list[i];
-        final isRecent = recents.contains(exam);
-
-        return GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              isRecent ? '/examens_passes' : '/examens_avenir',
-            );
-          },
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-              color: vertExamino,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(exam.titre,
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                Text(exam.date,
-                    style: const TextStyle(color: Colors.white70)),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _sectionTitle(String t, String route) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(t,
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: vertExamino)),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: vertExamino)),
           InkWell(
             onTap: () => Navigator.pushNamed(context, route),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(border: Border.all(color: vertExamino)),
-              child: Text("Voir plus",
-                  style: TextStyle(fontSize: 10, color: vertExamino)),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: vertExamino.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: vertExamino.withOpacity(0.3)),
+              ),
+              child: Text(
+                "Voir plus", 
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: vertExamino)
+              ),
             ),
           ),
         ],
@@ -252,34 +221,112 @@ class _EcranTableauBordState extends State<EcranTableauBord> {
   }
 
   Widget _buildHorizontalList(List<ModeleExamen> list, bool recent) {
-    if (list.isEmpty) return const SizedBox(height: 50, child: Center(child: Text("Aucun examen")));
+    if (list.isEmpty) {
+      return Container(
+        height: 100,
+        alignment: Alignment.center,
+        child: Text("Aucun examen", style: TextStyle(color: Colors.grey.shade400)),
+      );
+    }
+    
     return SizedBox(
-      height: 160,
+      height: 185, 
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(left: 20),
+        padding: const EdgeInsets.only(left: 20, right: 10),
         itemCount: list.length,
         itemBuilder: (c, i) => Container(
-          width: 140,
-          margin: const EdgeInsets.only(right: 15, bottom: 5),
+          width: 165,
+          margin: const EdgeInsets.only(right: 20, bottom: 10, top: 5),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: orangeExamino, width: 3),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: orangeExamino, width: 3.5),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 4)),
+            ],
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center, // ✅ CENTRE TOUT LE CONTENU
             children: [
-              Text(list[i].titre,
-                  style: const TextStyle(fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
-              const SizedBox(height: 10),
-              recent
-                  ? Text("Note: ${list[i].note ?? '?'}")
-                  : Text(list[i].date, style: const TextStyle(fontSize: 11)),
+              // ✅ TITRE AVEC TRAIT FIN ET ESPACÉ
+              Container(
+                padding: const EdgeInsets.only(bottom: 6),
+                margin: const EdgeInsets.symmetric(horizontal: 15),
+                decoration: const BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Colors.black12, width: 1.5))
+                ),
+                child: Text(
+                  list[i].titre.toUpperCase(),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: vertExamino),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 15),
+              
+              if (recent) ...[
+                // ✅ RÉCENTS : Note + En ligne
+                Text(
+                  "Note: ${list[i].note ?? '?'}",
+                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  "En ligne",
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.black54),
+                ),
+              ] else ...[
+                // ✅ À VENIR : Date, Heure, Durée centrés avec icônes
+                _rowAvenirCentered(Icons.calendar_month_outlined, list[i].date),
+                _rowAvenirCentered(Icons.access_time, list[i].heure),
+               
+              ],
             ],
           ),
         ),
       ),
+    );
+  }
+
+  // ✅ HELPER POUR ALIGNEMENT CENTRÉ DES ICÔNES ET TEXTE
+  Widget _rowAvenirCentered(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center, // ✅ Centre horizontalement dans la carte
+        children: [
+          Icon(icon, size: 16, color: Colors.black54),
+          const SizedBox(width: 8),
+          Text(
+            text,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.black87),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchResults(List<ModeleExamen> list, List<ModeleExamen> recents) {
+    return ListView.builder(
+      itemCount: list.length,
+      itemBuilder: (context, i) {
+        final exam = list[i];
+        return GestureDetector(
+          onTap: () => Navigator.pushNamed(context, recents.contains(exam) ? '/examens_passes' : '/examens_avenir'),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(color: vertExamino, borderRadius: BorderRadius.circular(12)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(exam.titre, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(exam.date, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

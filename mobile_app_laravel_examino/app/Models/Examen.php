@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Question;
 
 class Examen extends Model
 {
@@ -26,4 +27,9 @@ class Examen extends Model
     {
         return $this->hasMany(PassageExamen::class, 'examen_id');
     }
+    public function questions()
+{
+    return $this->hasMany(Question::class, 'id_examen');
+}
+
 }

@@ -33,4 +33,17 @@ class SourceExamenDistante {
         .map((e) => ModeleExamen.fromJson(e))
         .toList();
   }
+
+    Future<Map<String, dynamic>> getCorrection(int id) async {
+    try {
+      final res = await _dio.get('correction/$id');
+      return res.data; // Retourne le JSON complet (titre, questions, etc.)
+    } catch (e) {
+      print("Erreur API Correction: $e");
+      if (e is DioException) {
+        print("Détails serveur: ${e.response?.data}");
+      }
+      throw Exception('Erreur lors du chargement de la correction');
+    }
+  }
 }

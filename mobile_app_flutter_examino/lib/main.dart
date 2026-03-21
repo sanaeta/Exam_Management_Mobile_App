@@ -8,6 +8,8 @@ import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_auj
 import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_passes.dart';
 import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_examens_avenir.dart';
 import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_profil.dart';
+import 'package:mobile_app_flutter_examino/presentation/ecrans/ecran_correction.dart';
+
 
 
 void main() { runApp(const MyApp()); }
@@ -30,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/examens_passes': (context) => const EcranExamensPasses(),
         '/examens_avenir': (context) => const EcranExamensAvenir(),
         '/examens_aujourdhui': (context) => const EcranExamensAujourdhui(),
+         '/correction': (context) => const EcranCorrection(),
         '/profile': (context) => const EcranProfil(),    
           },
     );
