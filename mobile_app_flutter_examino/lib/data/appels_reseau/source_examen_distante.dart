@@ -46,4 +46,14 @@ class SourceExamenDistante {
       throw Exception('Erreur lors du chargement de la correction');
     }
   }
+
+  Future<bool> envoyerReclamation(int idExamen, String message) async {
+  try {
+    final response = await _dio.post('reclamations', data: {
+      'id_examen': idExamen,
+      'message': message,
+    });
+    return response.statusCode == 200;
+  } catch (e) { return false; }
+}
 }

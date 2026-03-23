@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(child: SingleChildScrollView(padding: const EdgeInsets.all(20), child: Column(children: [
-        Align(alignment: Alignment.topRight, child: IconButton(icon: const Icon(Icons.cancel, color: AppTheme.primaryColor), onPressed: () {})),
+        Align(alignment: Alignment.topRight, child: IconButton(icon: const Icon(Icons.cancel, color: AppTheme.primaryColor), onPressed: () => Navigator.pop(context,"/"))),
         const Text("Connexion", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)), const SizedBox(height: 20),
         Image.asset('assets/images/login_img.png', height: 150, errorBuilder: (c,e,s) => const Icon(Icons.image, size: 100)), const SizedBox(height: 30),
         TextField(controller: _emailController, decoration: AppTheme.inputDecoration("Email", Icons.email_outlined)), const SizedBox(height: 15),

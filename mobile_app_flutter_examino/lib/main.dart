@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         '/examens_passes': (context) => const EcranExamensPasses(),
         '/examens_avenir': (context) => const EcranExamensAvenir(),
         '/examens_aujourdhui': (context) => const EcranExamensAujourdhui(),
-         '/correction': (context) => const EcranCorrection(),
+        '/correction': (context) => const EcranCorrection(),
         '/profile': (context) => const EcranProfil(),    
           },
     );

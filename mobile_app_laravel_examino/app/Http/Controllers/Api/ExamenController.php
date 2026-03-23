@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Examen;
 use App\Models\PassageExamen;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+
 
 class ExamenController 
 {
-    /**
-     * Données pour la page d'accueil (Tableau de bord)
-     * Affiche les 2 derniers passés et les 2 prochains (à partir de demain)
-     */
+    //Données pour la page d'accueil (Tableau de bord)
+     
     public function getDashboardData(Request $request)
     {
         $user = $request->user();
@@ -33,9 +31,9 @@ class ExamenController
             ->take(2)
             ->get();
 
-        // 2. À VENIR : Les 2 prochains examens (Strictement APRÈS aujourd'hui)
+        // 2. À VENIR : Les 2 prochains examens 
         $avenir = Examen::with('matiere')
-            ->whereDate('date_examen', '>', Carbon::today()) // ✅ FIX: Uniquement après aujourd'hui
+            ->whereDate('date_examen', '>', Carbon::today()) 
             ->whereDoesntHave('passages', fn($q) => $q->where('user_id', $user->id))
             ->when($recherche, function ($q) use ($recherche) {
                 $q->whereHas('matiere', fn($q2) => $q2->where('nom', 'like', "%$recherche%"));
@@ -51,7 +49,7 @@ class ExamenController
     }
 
     /**
-     * Historique complet des examens passés
+     * liste des examens passés
      */
     public function getPasses(Request $request)
     {
@@ -65,13 +63,13 @@ class ExamenController
     }
 
     /**
-     * Liste complète des examens futurs (Demain et après)
+     * Liste complète des examens à venir
      */
     public function getAvenir(Request $request)
     {
         return response()->json(
             Examen::with('matiere')
-                ->whereDate('date_examen', '>', Carbon::today()) // ✅ FIX: Strictement futur
+                ->whereDate('date_examen', '>', Carbon::today()) // à venir
                 ->orderBy('date_examen', 'asc')
                 ->get()
                 ->map(fn($e) => $this->formatExamen($e))
@@ -79,13 +77,13 @@ class ExamenController
     }
 
     /**
-     * Liste complète des examens prévus pour AUJOURD'HUI uniquement
+     * Liste complète des examens d' AUJOURD'HUI 
      */
     public function getAujourdhui(Request $request)
     {
         return response()->json(
             Examen::with('matiere')
-                ->whereDate('date_examen', Carbon::today()) // ✅ FIX: Uniquement aujourd'hui
+                ->whereDate('date_examen', Carbon::today()) //   aujourd'hui
                 ->orderBy('date_examen', 'asc')
                 ->get()
                 ->map(fn($e) => $this->formatExamen($e))
@@ -101,7 +99,6 @@ class ExamenController
         $examen = Examen::with(['questions.propositions', 'matiere'])->findOrFail($id);
 
         // On récupère les choix de l'utilisateur dans la table reponses
-        // On utilise id_etudiant car c'est le nom dans ta migration reponses
         $userAnswers = DB::table('reponses')
             ->where('id_etudiant', $user->id)
             ->get()
@@ -156,4 +153,48 @@ class ExamenController
             'duree' => $e->duree . " minutes",
         ];
     }
+
+    public function postReclamation(Request $request) {
+    // 1. Validation
+    $request->validate([
+        'id_examen' => 'required',
+        'message' => 'required|min:5'
+    ]);
+
+    $user = $request->user();
+
+    try {
+
+        DB::table('reclamations')->insert([
+            'message' => $request->message,
+            'statut' => 'en_attente',
+            'id_etudiant' => $user->id,
+            'id_examen' => $request->id_examen,
+            'date_depot' => now()
+        ]);
+
+        //  Récupérer le nom de la matière pour l'email
+        $matiereNom = DB::table('examen')
+            ->join('matieres', 'examen.id_matiere', '=', 'matieres.id')
+            ->where('examen.id_examen', $request->id_examen)
+            ->value('matieres.nom');
+
+        //  Envoi Email via Mailtrap
+        $details = [
+            'user' => $user->nom . ' ' . $user->prenom,
+            'matiere' => $matiereNom ?? 'Inconnue',
+            'message' => $request->message
+        ];
+
+        Mail::to('administration@um5.ac.ma')->send(new \App\Mail\ReclamationMail($details));
+
+        return response()->json(['message' => 'Réclamation transmise avec succès'], 200);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Erreur technique lors de l\'enregistrement',
+            'error_debug' => $e->getMessage()
+        ], 500);
+    }
+}
 }
