@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/correction/{id}', [ExamenController::class, 'getCorrection']);
     Route::get('/examens-avenir', [ExamenController::class, 'getAvenir']);
     Route::get('/examens-aujourdhui', [ExamenController::class, 'getAujourdhui']);
-     Route::get('/profile', [ProfileController::class, 'show']);
+    Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
     Route::post('/reclamations', [ExamenController::class, 'postReclamation']);
 });

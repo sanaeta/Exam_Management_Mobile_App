@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
        Schema::create('examen', function (Blueprint $table) {
-    $table->id('id_examen');
-    $table->string('titre');
-    $table->dateTime('date_examen'); // Contient la date ET l'heure
-    $table->integer('duree'); // On utilise integer pour les minutes
-    $table->foreignId('id_matiere')->constrained('matiere');
-});
+       $table->id('id_examen');
+       $table->string('titre');
+       $table->dateTime('date_examen'); // Contient la date ET l'heure
+       $table->integer('duree'); // On utilise integer pour les minutes
+       $table->foreignId('id_matiere')->constrained('matiere');
+  });
     }
 
     /**

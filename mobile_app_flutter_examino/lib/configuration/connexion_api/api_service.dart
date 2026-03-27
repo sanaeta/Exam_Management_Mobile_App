@@ -68,8 +68,7 @@ class ApiService {
     return null;
   }
 
-  // --- METTRE À JOUR LE PROFIL ---
-  Future<bool> updateProfile(Map<String, dynamic> data) async {
+ Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     try {
@@ -82,9 +81,10 @@ class ApiService {
         },
         body: jsonEncode(data),
       );
-      return response.statusCode == 200;
+      // On retourne le corps de la réponse quel que soit le code (200 ou 422)
+      return jsonDecode(response.body);
     } catch (e) {
-      return false;
+      return {'message': 'Erreur de connexion au serveur'};
     }
   }
 }
