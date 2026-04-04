@@ -39,90 +39,123 @@ class _EcranCorrectionState extends State<EcranCorrection> {
     });
   }
 
-  // --- FONCTION DE RÉCLAMATION AVEC EFFET DE CHARGEMENT ---
-  void _afficherDialogueReclamation() {
-    bool _isSending = false; // État local au dialogue
+void _afficherDialogueReclamation() {
+  bool _isSending = false;
+  String? _errorText;
 
-    showDialog(
-      context: context,
-      barrierDismissible: !_isSending, // Empêche de fermer pendant l'envoi
-      builder: (context) {
-        return StatefulBuilder( // ✅ Permet de mettre à jour le bouton dans le dialogue
-          builder: (context, setDialogState) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              title: const Text("Déposer une réclamation", 
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text("Décrivez  l'erreur constatée sur votre note ou la correction.",
-                      style: TextStyle(fontSize: 13, color: Colors.black54)),
-                  const SizedBox(height: 15),
-                  TextField(
-                    controller: _messageController,
-                    maxLines: 4,
-                    enabled: !_isSending, // Désactive le champ pendant l'envoi
-                    decoration: InputDecoration(
-                      hintText: "Votre message...",
-                      hintStyle: const TextStyle(fontSize: 14),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: _isSending ? null : () => Navigator.pop(context),
-                  child: const Text("Annuler"),
+  showDialog(
+    context: context,
+    barrierDismissible: !_isSending,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: const Text(
+              "Déposer une réclamation",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Décrivez l'erreur constatée sur votre note ou la correction.",
+                  style: TextStyle(fontSize: 13, color: Colors.black54),
                 ),
-                SizedBox(
-                  width: 100,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: vertExamino,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                const SizedBox(height: 15),
+                TextField(
+                  controller: _messageController,
+                  maxLines: 4,
+                  enabled: !_isSending,
+                  onChanged: (_) {
+                    if (_errorText != null) {
+                      setDialogState(() => _errorText = null);
+                    }
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Votre message...",
+                    hintStyle: const TextStyle(fontSize: 14),
+                    errorText: _errorText,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    onPressed: _isSending ? null : () async {
-                      if (_messageController.text.trim().isEmpty) return;
-
-                      // 1. Activer le chargement
-                      setDialogState(() => _isSending = true);
-
-                      final prefs = await SharedPreferences.getInstance();
-                      bool succes = await SourceExamenDistante(token: prefs.getString('token')!)
-                          .envoyerReclamation(idExamenActuel!, _messageController.text);
-
-                      // 2. Désactiver le chargement
-                      setDialogState(() => _isSending = false);
-
-                      Navigator.pop(context); // Fermer le dialogue
-
-                      // 3. Afficher le résultat
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(succes ? "Réclamation envoyée avec succès !" : "Échec de l'envoi"),
-                        backgroundColor: succes ? Colors.green : Colors.red,
-                        behavior: SnackBarBehavior.floating,
-                      ));
-
-                      if (succes) _messageController.clear();
-                    },
-                    child: _isSending
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                          )
-                        : const Text("Envoyer", style: TextStyle(color: Colors.white)),
                   ),
-                )
+                ),
               ],
-            );
-          },
-        );
-      },
-    );
-  }
+            ),
+            actions: [
+              TextButton(
+                onPressed: _isSending ? null : () => Navigator.pop(context),
+                child: const Text("Annuler"),
+              ),
+              SizedBox(
+                width: 100,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: vertExamino,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  onPressed: _isSending
+                      ? null
+                      : () async {
+                          final message = _messageController.text.trim();
+                          if (message.isEmpty) {
+                            setDialogState(() {
+                              _errorText = "Veuillez saisir un motif valide";
+                            });
+                            return;
+                          }
+
+                          setDialogState(() => _isSending = true);
+
+                          final prefs = await SharedPreferences.getInstance();
+                          bool succes = await SourceExamenDistante(
+                                  token: prefs.getString('token')!)
+                              .envoyerReclamation(idExamenActuel!, message);
+
+                          setDialogState(() => _isSending = false);
+
+                          Navigator.pop(context);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                succes
+                                    ? "Réclamation envoyée avec succès !"
+                                    : "Échec de l'envoi",
+                              ),
+                              backgroundColor:
+                                  succes ? Colors.green : Colors.red,
+                              behavior: SnackBarBehavior.floating,
+                            ),
+                          );
+
+                          if (succes) _messageController.clear();
+                        },
+                  child: _isSending
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text(
+                          "Envoyer",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                ),
+              )
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +169,7 @@ class _EcranCorrectionState extends State<EcranCorrection> {
               future: futureData,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
-                if (snapshot.hasError) return Center(child: Text("Erreur serveur : ${snapshot.error}"));
+                if (snapshot.hasError) return Center(child: Text("Erreur serveur"));
                 if (!snapshot.hasData) return const Center(child: Text("Pas de données"));
 
                 final data = snapshot.data!;
@@ -187,7 +220,13 @@ class _EcranCorrectionState extends State<EcranCorrection> {
                   IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white, size: 30)),
                   GestureDetector(
                     onTap: () => Navigator.pushNamed(context, '/profile'),
-                    child: Text(nomEtudiant, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.account_circle, color: Colors.white, size: 20),
+                        const SizedBox(width: 5),
+                        Text(nomEtudiant, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -235,9 +274,11 @@ class ItemQuestionCorrection extends StatefulWidget {
 
 class _ItemQuestionCorrectionState extends State<ItemQuestionCorrection> {
   bool _isExpanded = false;
+  
   @override
   Widget build(BuildContext context) {
-    bool isCorrect = widget.questionData['is_correct'];
+    String status = widget.questionData['status'] ?? (widget.questionData['is_correct'] ? 'correct' : 'faux');
+    
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12))),
@@ -247,7 +288,7 @@ class _ItemQuestionCorrectionState extends State<ItemQuestionCorrection> {
             onTap: () => setState(() => _isExpanded = !_isExpanded),
             contentPadding: EdgeInsets.zero,
             title: Text(widget.questionData['enonce'], style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            subtitle: Text(isCorrect ? "correcte" : "fausse", style: TextStyle(color: isCorrect ? Colors.lightGreen : Colors.redAccent, fontWeight: FontWeight.bold)),
+            subtitle: _buildSubtitle(status),
             trailing: Icon(_isExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right, size: 30, color: Colors.black54),
           ),
           if (_isExpanded)
@@ -255,7 +296,11 @@ class _ItemQuestionCorrectionState extends State<ItemQuestionCorrection> {
               padding: const EdgeInsets.only(bottom: 15),
               child: Column(
                 children: [
-                  _reponseBox("votre réponse:  ${widget.questionData['votre_reponse']}", const Color(0xFFF48FB1)),
+                  if (status == 'non_repondu')
+                    _reponseBox("Aucune réponse sélectionnée", Colors.grey.shade300)
+                  else
+                    _reponseBox("votre réponse:  ${widget.questionData['votre_reponse']}", 
+                                status == 'correct' ? const Color(0xFFA5D6A7) : const Color(0xFFF48FB1)),
                   const SizedBox(height: 8),
                   _reponseBox("réponse correcte:  ${widget.questionData['reponse_correcte']}", const Color(0xFFA5D6A7)),
                 ],
@@ -265,5 +310,21 @@ class _ItemQuestionCorrectionState extends State<ItemQuestionCorrection> {
       ),
     );
   }
-  Widget _reponseBox(String text, Color color) => Container(width: double.infinity, padding: const EdgeInsets.all(12), decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)), child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87)));
+
+  Widget _buildSubtitle(String status) {
+    if (status == 'correct') {
+      return const Text("correcte", style: TextStyle(color: Colors.lightGreen, fontWeight: FontWeight.bold));
+    } else if (status == 'faux') {
+      return const Text("fausse", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold));
+    } else {
+      return const Text("Non répondu", style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold));
+    }
+  }
+
+  Widget _reponseBox(String text, Color color) => Container(
+    width: double.infinity, 
+    padding: const EdgeInsets.all(12), 
+    decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)), 
+    child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87))
+  );
 }

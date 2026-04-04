@@ -22,6 +22,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
     Route::post('/reclamations', [ExamenController::class, 'postReclamation']);
+
+    Route::get('/examens/{id}/questions', [ExamenController::class, 'getQuestions']);
+    Route::post('/examens/{id}/soumettre', [ExamenController::class, 'soumettre']);
 });
 
 Route::post('/password/forgot', [PasswordController::class, 'sendResetEmail']);

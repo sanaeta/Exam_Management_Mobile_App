@@ -90,7 +90,6 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
-                          // ✅ BORDURE EN ORANGE
                           border: Border.all(color: orangeExamino, width: 2.5),
                           boxShadow: const [
                             BoxShadow(
@@ -106,7 +105,6 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // ✅ 1. MATIÈRE EN VERT (LA PLUS IMPORTANTE)
                                 Text(
                                   exam.titre,
                                   style: TextStyle(
@@ -115,16 +113,16 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
                                       color: vertExamino),
                                 ),
                                 const SizedBox(height: 6),
-                                // ✅ 2. DATE EN NOIR FONCÉ (IMPORTANTE)
+                                // ✅ NOTE EN PREMIER (ORANGE)
                                 Text(
-                                  exam.date,
-                                  style: const TextStyle(
-                                      color: Colors.black, 
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 15),
+                                  "Note : ${exam.note ?? '?'}",
+                                  style: TextStyle(
+                                      color: orangeExamino, 
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18),
                                 ),
-                                const SizedBox(height: 10),
-                                // ✅ 3. ENSEIGNANT (DISCRET)
+                                const SizedBox(height: 5),
+                                // ✅ ENSEIGNANT (DISCRET)
                                 Text(
                                   "Enseignant: ${exam.enseignant ?? ''}",
                                   style: const TextStyle(
@@ -135,7 +133,6 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
                                 ),
                               ],
                             ),
-                            // ICÔNE CHEVRON
                             Icon(
                               Icons.arrow_forward_ios,
                               color: vertExamino,
@@ -158,12 +155,7 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
   Widget _buildHeader(BuildContext context, Color color) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(
-        15,
-        MediaQuery.of(context).padding.top + 15,
-        15,
-        20,
-      ),
+      padding: EdgeInsets.fromLTRB(15, MediaQuery.of(context).padding.top + 15, 15, 20),
       decoration: BoxDecoration(
         color: color,
         borderRadius: const BorderRadius.only(
@@ -186,14 +178,20 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
                 onTap: () {
                   Navigator.pushNamed(context, '/profile');
                 },
-                child: Text(
-                  nomEtudiant,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,
-                  ),
+                child: Row( // ✅ AJOUT ICÔNE
+                  children: [
+                    const Icon(Icons.account_circle, color: Colors.white, size: 22),
+                    const SizedBox(width: 8),
+                    Text(
+                      nomEtudiant,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

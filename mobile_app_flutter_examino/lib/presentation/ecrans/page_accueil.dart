@@ -65,7 +65,7 @@ class PageAccueil extends StatelessWidget {
       color: couleurPrincipale,
       child: const Center(
         child: Text(
-          "s'inscrire",
+          "S'inscrire",
           style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),

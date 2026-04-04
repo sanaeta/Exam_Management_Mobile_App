@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('passage_examens', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('examen_id')->constrained();
-    $table->foreignId('user_id')->constrained(); // l'étudiant
+    $table->unsignedBigInteger('examen_id');
+    $table->foreign('examen_id')->references('id_examen')->on('examen')->onDelete('cascade');
+    
+    $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+    
     $table->decimal('note', 5, 2)->nullable();
     $table->dateTime('date_passage');
     $table->timestamps();
