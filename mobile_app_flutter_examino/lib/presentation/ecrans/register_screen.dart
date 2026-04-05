@@ -8,6 +8,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+
   final _nomController = TextEditingController(); 
   final _prenomController = TextEditingController();
   final _emailController = TextEditingController(); 
@@ -54,13 +55,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       setState(() => _isLoading = false);
       
       if (success) {
-        // ✅ MESSAGE DE SUCCÈS
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Inscription réussie ! Connectez-vous."), backgroundColor: Colors.green)
         );
 
-        // ✅ REDIRECTION VERS LA PAGE DE CONNEXION
-        // On utilise pushReplacementNamed pour vider la page d'inscription de la mémoire
+        // REDIRECTION VERS LA PAGE DE CONNEXION
+        
         Navigator.pushReplacementNamed(context, '/login');
       } else {
         // MESSAGE D'ERREUR

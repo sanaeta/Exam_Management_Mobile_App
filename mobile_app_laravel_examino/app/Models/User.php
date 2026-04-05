@@ -14,7 +14,7 @@ class User extends Authenticatable
 
 protected $table = 'users'; 
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable; // <--- 2. AJOUT DE 'HasApiTokens' ICI
+    use HasApiTokens, HasFactory, Notifiable; 
 
     /**
      * The attributes that are mass assignable.

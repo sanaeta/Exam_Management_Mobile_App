@@ -20,9 +20,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   final String baseUrl = "http://10.0.2.2:8000/api";
 
-  // =========================
   // Étape 1 : envoyer code
-  // =========================
+  
   Future<void> _demanderCode() async {
     final email = _emailController.text.trim().toLowerCase();
 
@@ -55,9 +54,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => _isLoading = false);
   }
 
-  // =========================
   // Étape 2 : reset password
-  // =========================
+
   Future<void> _resetFinal() async {
     final email = _emailController.text.trim().toLowerCase();
     final code = _codeController.text.trim();
@@ -101,9 +99,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => _isLoading = false);
   }
 
-  // =========================
-  // UI Helpers
-  // =========================
+
   void _showSnack(String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
@@ -145,9 +141,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  // =========================
-  // UI
-  // =========================
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

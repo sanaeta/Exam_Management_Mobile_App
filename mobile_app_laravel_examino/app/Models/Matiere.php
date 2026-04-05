@@ -7,8 +7,7 @@ use App\Models\Examen;
 
 class Matiere extends Model
 {
-    // La table s'appelle 'matieres' (au pluriel), c'est la convention, 
-    // donc pas besoin de préciser $table, mais on le fait par sécurité.
+   
     protected $table = 'matieres';
 
 

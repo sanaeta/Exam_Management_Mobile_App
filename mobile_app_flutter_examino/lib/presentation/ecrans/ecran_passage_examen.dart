@@ -65,7 +65,7 @@ class _EcranPassageExamenState extends State<EcranPassageExamen> {
         if (mounted) setState(() => _tempsRestant--);
       } else {
         _timer?.cancel();
-        _showTimeUpModal(); // ✅ DÉCLENCHE LE MODAL D'EXPIRATION
+        _showTimeUpModal(); // DÉCLENCHE LE MODAL D'EXPIRATION
       }
     });
   }

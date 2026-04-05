@@ -48,9 +48,8 @@ class ExamenController
         ]);
     }
 
-    /**
-     * liste des examens passés
-     */
+    // liste complète des examens passés
+     
     public function getPasses(Request $request)
     {
         return response()->json(
@@ -62,9 +61,8 @@ class ExamenController
         );
     }
 
-    /**
-     * Liste complète des examens à venir
-     */
+    // Liste complète des examens à venir
+     
     public function getAvenir(Request $request)
     {
         return response()->json(
@@ -76,9 +74,8 @@ class ExamenController
         );
     }
 
-    /**
-     * Liste complète des examens d' AUJOURD'HUI 
-     */
+    //Liste complète des examens d' AUJOURD'HUI 
+     
    public function getAujourdhui(Request $request)
 {
     $user = $request->user();
@@ -95,9 +92,8 @@ class ExamenController
     return response()->json($aujourdhui->map(fn($e) => $this->formatExamen($e)));
 }
 
-    /**
-     * Récupération de la correction dynamique pour un examen
-     */
+    // Récupération de la correction dynamique pour un examen
+    
  public function getCorrection($id, Request $request) {
     $user = $request->user();
     $examen = Examen::with(['questions.propositions', 'matiere'])->findOrFail($id);
@@ -171,7 +167,7 @@ class ExamenController
     }
 
     public function postReclamation(Request $request) {
-    // 1. Validation
+    
     $request->validate([
         'id_examen' => 'required',
         'message' => 'required|min:5'
@@ -214,7 +210,7 @@ class ExamenController
     }
 }
 
-// 1. Récupérer les questions (Diagramme : afficherQuestions)
+//  Récupérer les questions 
 public function getQuestions($id) {
     $examen = Examen::with(['questions.propositions'])->findOrFail($id);
     return response()->json([
@@ -232,11 +228,9 @@ public function getQuestions($id) {
     ]);
 }
 
-// --- ENREGISTREMENT FINAL (Appelé une seule fois à la fin) ---
+//  ENREGISTREMENT FINAL 
 public function soumettre(Request $request, $id) {
     $user = $request->user();
-    // Reçoit un JSON comme : {"10": 501, "11": 505} 
-    // (id_question => id_proposition)
     $reponsesEnvoyees = $request->input('reponses'); 
 
     $examen = Examen::with('questions')->findOrFail($id);
@@ -247,7 +241,7 @@ public function soumettre(Request $request, $id) {
     foreach ($examen->questions as $question) {
         $idQ = $question->id_question; 
         
-        // On vérifie si l'étudiant a donné une réponse pour CETTE question
+        // On vérifie si l'étudiant a donné une réponse pour cette  question
         $idPropChoisie = $reponsesEnvoyees[$idQ] ?? null;
 
         if ($idPropChoisie) {

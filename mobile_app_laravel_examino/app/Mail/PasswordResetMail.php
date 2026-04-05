@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 class PasswordResetMail extends Mailable
 {
      public function build() {
-        return $this->subject('Réinitialisation de votre mot de passe - Examino')
+        return $this->subject('Réinitialisation de votre mot de passe - EXAMINO')
                     ->html("<h1>Bonjour,</h1><p>Vous avez demandé la réinitialisation de votre mot de passe.</p><p>Votre code temporaire est : <strong>123456</strong></p>");
     }
 }

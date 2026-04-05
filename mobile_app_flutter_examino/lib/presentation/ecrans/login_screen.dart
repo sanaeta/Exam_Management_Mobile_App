@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mobile_app_flutter_examino/configuration/theme/app_theme.dart';
 import 'package:mobile_app_flutter_examino/configuration/connexion_api/api_service.dart';
 
-class LoginScreen extends StatefulWidget { const LoginScreen({super.key}); @override State<LoginScreen> createState() => _LoginScreenState(); }
+class LoginScreen extends StatefulWidget { const LoginScreen({super.key});
+ @override State<LoginScreen> createState() => _LoginScreenState(); }
 
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();

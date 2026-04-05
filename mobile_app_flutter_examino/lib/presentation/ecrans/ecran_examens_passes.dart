@@ -113,7 +113,6 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
                                       color: vertExamino),
                                 ),
                                 const SizedBox(height: 6),
-                                // ✅ NOTE EN PREMIER (ORANGE)
                                 Text(
                                   "Note : ${exam.note ?? '?'}",
                                   style: TextStyle(
@@ -122,7 +121,6 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
                                       fontSize: 18),
                                 ),
                                 const SizedBox(height: 5),
-                                // ✅ ENSEIGNANT (DISCRET)
                                 Text(
                                   "Enseignant: ${exam.enseignant ?? ''}",
                                   style: const TextStyle(
@@ -178,7 +176,7 @@ class _EcranExamensPassesState extends State<EcranExamensPasses> {
                 onTap: () {
                   Navigator.pushNamed(context, '/profile');
                 },
-                child: Row( // ✅ AJOUT ICÔNE
+                child: Row(
                   children: [
                     const Icon(Icons.account_circle, color: Colors.white, size: 22),
                     const SizedBox(width: 8),

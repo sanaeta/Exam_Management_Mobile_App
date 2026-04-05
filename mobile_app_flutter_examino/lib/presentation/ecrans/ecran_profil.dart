@@ -70,7 +70,6 @@ class _EcranProfilState extends State<EcranProfil> {
                     backgroundColor: isValid ? const Color.fromARGB(255, 18, 52, 42) : Colors.grey,
                   ),
                   onPressed: isValid ? () async {
-                    // 1. On capture le gestionnaire de messages AVANT de fermer le dialogue
                     final scaffoldMessenger = ScaffoldMessenger.of(context);
                     
                     Navigator.pop(dialogContext);
@@ -80,7 +79,6 @@ class _EcranProfilState extends State<EcranProfil> {
                     
                     if (!mounted) return; 
 
-                    // 2. On vérifie si succès (Laravel renvoie un champ 'user' ou 'status' == 'success')
                     if (resultat.containsKey('user') || resultat['status'] == 'success') {
                       _chargerProfil(); 
                       scaffoldMessenger.showSnackBar(
@@ -164,7 +162,6 @@ class _EcranProfilState extends State<EcranProfil> {
                   _buildCard("NOM", userData?['nom'] ?? 'Non renseigné', "nom"),
                   _buildCard("PRÉNOM", userData?['prenom'] ?? 'Non renseigné', "prenom"),
                   _buildCard("GMAIL", userData?['email'] ?? '', "email"),
-                  // Mot de passe affiché en clair (Laravel renvoie le hash par défaut, mais pour le visuel PFE c'est OK)
                   _buildCard("MOT DE PASSE", "********", "password"),
                 ],
               ),

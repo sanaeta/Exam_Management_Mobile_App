@@ -3,43 +3,62 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
 
+
 class ApiService {
+
   static const String baseUrl = 'http://10.0.2.2:8000/api';
 
- Future<bool> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/login'), 
-        headers: {'Content-Type': 'application/json'}, 
-        body: jsonEncode({'email': email, 'password': password})
+        Uri.parse('$baseUrl/login'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        
+
         // 1. On stocke le token
         await prefs.setString('token', data['token']);
-        
-        // 2. On stocke le nom et prénom (Ajouté pour le dynamisme)
+
+        // 2. On stocke le nom et prénom de l'étudiant 
         if (data['user'] != null) {
           await prefs.setString('user_nom', data['user']['nom']);
           await prefs.setString('user_prenom', data['user']['prenom']);
         }
-        
+
         return true;
       }
       return false;
-    } catch (e) { return false; }
+    } catch (e) {
+      return false;
+    }
   }
-  Future<bool> register(String nom, String prenom, String email, String password, int filiereId) async {
+
+  Future<bool> register(
+    String nom,
+    String prenom,
+    String email,
+    String password,
+    int filiereId,
+  ) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/register'), 
-        headers: {'Content-Type': 'application/json'}, 
-        body: jsonEncode({'nom': nom, 'prenom': prenom, 'email': email, 'password': password, 'filiere_id': filiereId})
+        Uri.parse('$baseUrl/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'nom': nom,
+          'prenom': prenom,
+          'email': email,
+          'password': password,
+          'filiere_id': filiereId,
+        }),
       );
       return response.statusCode == 201;
-    } catch (e) { return false; }
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<List<dynamic>> getFilieres() async {
@@ -47,7 +66,9 @@ class ApiService {
       final response = await http.get(Uri.parse('$baseUrl/filieres'));
       if (response.statusCode == 200) return jsonDecode(response.body);
       return [];
-    } catch (e) { return []; }
+    } catch (e) {
+      return [];
+    }
   }
 
   Future<Map<String, dynamic>?> getUserProfile() async {
@@ -68,7 +89,7 @@ class ApiService {
     return null;
   }
 
- Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     try {
@@ -81,7 +102,6 @@ class ApiService {
         },
         body: jsonEncode(data),
       );
-      // On retourne le corps de la réponse quel que soit le code (200 ou 422)
       return jsonDecode(response.body);
     } catch (e) {
       return {'message': 'Erreur de connexion au serveur'};

@@ -14,7 +14,7 @@ class ReclamationMail extends Mailable
    public $infos;
     public function __construct($infos) { $this->infos = $infos; }
     public function build() {
-        return $this->subject('Nouvelle Réclamation - Examino')
+        return $this->subject('Nouvelle Réclamation - EXAMINO')
                     ->html("<h2>Réclamation reçue</h2>
                             <p><strong>Étudiant(e) :</strong> {$this->infos['user']}</p>
                             <p><strong>Matière :</strong> {$this->infos['matiere']}</p>

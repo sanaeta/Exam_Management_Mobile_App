@@ -37,7 +37,7 @@ class SourceExamenDistante {
     Future<Map<String, dynamic>> getCorrection(int id) async {
     try {
       final res = await _dio.get('correction/$id');
-      return res.data; // Retourne le JSON complet (titre, questions, etc.)
+      return res.data;
     } catch (e) {
       print("Erreur API Correction: $e");
       if (e is DioException) {

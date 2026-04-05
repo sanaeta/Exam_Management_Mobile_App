@@ -6,7 +6,7 @@ class PageAccueil extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // On récupère la couleur depuis AppTheme
+
     final Color couleurPrincipale = AppTheme.primaryColor;
     // On crée une version claire pour le deuxième bouton
     final Color couleurBoutonClair = couleurPrincipale.withOpacity(0.7);
@@ -32,7 +32,7 @@ class PageAccueil extends StatelessWidget {
             ),
           ),
 
-          // 2. Slogan 
+          // Slogan 
           Expanded(
             flex: 3,
             child: Padding(
@@ -83,7 +83,7 @@ class PageAccueil extends StatelessWidget {
       color: couleurBoutonClair,
       child: Center(
         child: Text(
-          "se connecter",
+          "Se connecter",
           style: TextStyle(color: couleurPrincipale, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
